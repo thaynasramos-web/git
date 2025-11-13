@@ -1,7 +1,5 @@
 import "./Produtos.css";
-import banner_1 from "../../assets/imgs/banner.png";
-import banner_2 from "../../assets/imgs/banner2.png";
-import banner_3 from "../../assets/imgs/banner3.png";
+
 import choc_belga from "../../assets/imgs/choc-belga.png"
 import choc_ninho from "../../assets/imgs/choc-ninho.png"
 import cenoura_choc from "../../assets/imgs/cenoura-choc.png"
@@ -9,35 +7,42 @@ import choc_ninho_morang from "../../assets/imgs/choc-ninho-morango.png"
 import choc_pistache from "../../assets/imgs/choc-pistache.png"
 import choc_oreo from "../../assets/imgs/choc-oreo.png"
 import whats from "../../assets/whatsapp.png"
+import { useEffect, useState } from "react";
+import type { Bolo } from "../../types/Bolo";
+import { getBolos } from "../../services/bolosService";
+import bolo_default from "../../assets/imgs/bolo-default.png"
+import CardProduto from "../../components/CardProdutos/CardProduto";
+import Carossel from "../../components/Carossel/Carossel";
 
+
+//funções assincronas
 export default function Produtos() {
+    const [bolos, setBolos] = useState<Bolo[]>([]);
+
+
+
+
+    const fetchBolos = async () => {
+        try {
+            const dados = await getBolos();
+            console.log("Dados retornados da API: ", dados);
+            setBolos(dados);
+        } catch (error) {
+            console.error("Error ao executar getBolos:", error)
+        }
+    }
+
+    useEffect(() => {
+        fetchBolos();
+
+    }, [])
+
+
+
     return (
 
         <main>
-            <div id="carouselExampleAutoplaying" className="carousel slide" data-bs-ride="carousel">
-                <div className="carousel-inner">
-                    <div className="carousel-item active">
-                        <img src={banner_1} className="d-block w-100" alt="..." />
-                    </div>
-                    <div className="carousel-item">
-                        <img src={banner_2} className="d-block w-100" alt="..." />
-                    </div>
-                    <div className="carousel-item">
-                        <img src={banner_3} className="d-block w-100" alt="..." />
-                    </div>
-                </div>
-                <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
-                    data-bs-slide="prev">
-                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Previous</span>
-                </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
-                    data-bs-slide="next">
-                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span className="visually-hidden">Next</span>
-                </button>
-            </div>
-
+          <Carossel />
 
             <section className="container_produtos">
                 <h1 className="acessivel">produtos de chocolate</h1>
@@ -47,48 +52,24 @@ export default function Produtos() {
                 </div>
 
                 <section className="cards">
+
+                    {
+                        bolos.map((b: Bolo) => (
+                            <CardProduto
+                                nome={b.nome}
+                                descricao={b.descricao}
+                                preco={b.preco}
+                                imagem={b.imagens[0] ?? ""}
+                                peso={b.peso}
+                            />
+                        ))
+                    }
+
                     <div className="card_produto">
                         <img src={choc_belga} alt="Uma fatia de bolo de chocolate belga" />
                         <h2>Chocolate Belga</h2>
                         <p>Bolo macio de chocolate, aplicado granulado que traz crocância e um sabor irresistível.</p>
                         <span>R$ 80,00/kg.</span>
-                    </div>
-
-                    <div className="card_produto">
-                        <img src={choc_ninho} alt="Uma fatia de bolo de chocolate com ninho" />
-                        <h2>Chocolate com Ninho</h2>
-                        <p>Bolo macio de chocolate com creme de leite Ninho, um sabor irresistível.</p>
-                        <span>R$ 90,00/kg.</span>
-                    </div>
-
-                    <div className="card_produto">
-                        <img src={cenoura_choc} alt="Uma fatia de bolo de cenoura com cobertura de chocolate" />
-                        <h2>Cenoura com Chocolate</h2>
-                        <p>Bolo macio de cenoura com cobertura de chocolate, um sabor família e irresistível.</p>
-                        <span>R$ 70,00/kg.</span>
-                    </div>
-
-                    <div className="card_produto">
-                        <img src={choc_ninho_morang}
-                            alt="Uma fatia de bolo de ninho com morango e cobertura de chocolate" />
-                        <h2>Ninho com Morango</h2>
-                        <p>Bolo macio de chocolate com recheio de leite ninho e morango. A melhor combinação para seu dia.</p>
-                        <span>R$ 105,00/kg.</span>
-                    </div>
-
-                    <div className="card_produto">
-                        <img src={choc_pistache} alt="Uma fatia de bolo de chocolate com pistache" />
-                        <h2>Chocolate com Pistache</h2>
-                        <p>Bolo macio de chocolate, aplicado granulado que traz crocância e um sabor irresistível.</p>
-                        <span>R$ 80,00/kg.</span>
-                    </div>
-
-                    <div className="card_produto">
-                        <img src={choc_oreo} alt="Uma fatia de bolo de chocolate com biscoito recheado Oreo" />
-                        <h2>Chocolate com Oreo</h2>
-                        <p>Bolo macio chocolate, com creme delicado, recheio e cobertura de biscoitos rechedos Oreo, um sabor
-                            irresistível.</p>
-                        <span>R$ 100,00/kg.</span>
                     </div>
                 </section>
             </section>
